@@ -67,9 +67,12 @@ jobs:
           command: |
             mvn clean install -Pprod -DskipTests
             curl https://cli-assets.heroku.com/install.sh | sh
+            docker build --rm=false -t registry.heroku.com/HEROKU_APP_NAME/web .
+            docker login --username=$HEROKU_EMAIL --password=$HEROKU_API_KEY registry.heroku.com
+            docker push registry.heroku.com/HEROKU_APP_NAME/web
             heroku container:login
-            heroku container:push web -a $HEROKU_APP_NAME
-            heroku container:release web -a $HEROKU_APP_NAME
+            heroku container:push -app $HEROKU_APP_NAME web
+            heroku container:release web
 
 workflows:
   version: 2
